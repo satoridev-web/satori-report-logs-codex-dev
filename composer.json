@@ -1,0 +1,9 @@
+{
+    "name": "satori/report-logs",
+    "description": "SATORI Report Logs plugin with HTML, CSV, and PDF exports.",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4",
+        "dompdf/dompdf": "^2.0"
+    }
+}
