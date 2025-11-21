@@ -7,6 +7,7 @@
 
 namespace Satori\Report_Logs\Admin;
 
+use Satori\Report_Logs\Capabilities;
 use Satori\Report_Logs\Db\Reports_Repository;
 
 class Screen_Dashboard {
@@ -33,7 +34,7 @@ class Screen_Dashboard {
 	 * @return void
 	 */
 	public function render() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Capabilities::get_required_capability() ) ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'satori-report-logs' ) );
 		}
 
@@ -46,11 +47,17 @@ class Screen_Dashboard {
 			admin_url( 'admin.php' )
 		);
 		$edit_text = esc_html__( 'Edit', 'satori-report-logs' );
+		$error     = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] ) ) : '';
 
 		echo '<div class="wrap satori-report-logs-admin">';
 		echo '<h1>' . esc_html__( 'Report Logs', 'satori-report-logs' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Manage monthly report logs.', 'satori-report-logs' ) . '</p>';
 		echo '<a class="button button-primary" href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add New Report', 'satori-report-logs' ) . '</a>';
+
+		if ( $error ) {
+			$error_message = esc_html__( 'Unable to complete that action. Please try again.', 'satori-report-logs' );
+			echo '<div class="notice notice-error"><p>' . esc_html( $error_message ) . '</p></div>';
+		}
 
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
@@ -98,6 +105,18 @@ class Screen_Dashboard {
 				echo '<td>';
 				echo '<a class="button button-small" href="' . esc_url( $edit_url ) . '">' . $edit_text . '</a> ';
 				echo '<a class="button button-small" href="' . esc_url( $export_url ) . '">' . esc_html__( 'Export', 'satori-report-logs' ) . '</a>';
+				echo '<form class="srl-duplicate-form" action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">';
+				echo '<input type="hidden" name="page" value="' . esc_attr( Admin::MENU_SLUG ) . '" />';
+				echo '<input type="hidden" name="action" value="duplicate" />';
+				echo '<input type="hidden" name="log_id" value="' . esc_attr( $report_id ) . '" />';
+				wp_nonce_field( 'satori_report_logs_duplicate', '_wpnonce', true, true );
+				echo '<label class="screen-reader-text" for="duplicate-target-' . esc_attr( $report_id ) . '">' . esc_html__( 'Duplicate target', 'satori-report-logs' ) . '</label>';
+				echo '<select name="target" id="duplicate-target-' . esc_attr( $report_id ) . '">';
+				echo '<option value="same">' . esc_html__( 'Same month/year', 'satori-report-logs' ) . '</option>';
+				echo '<option value="next">' . esc_html__( 'Next month', 'satori-report-logs' ) . '</option>';
+				echo '</select>';
+				echo '<button type="submit" class="button button-small">' . esc_html__( 'Duplicate', 'satori-report-logs' ) . '</button>';
+				echo '</form>';
 				echo '</td>';
 				echo '</tr>';
 			}
