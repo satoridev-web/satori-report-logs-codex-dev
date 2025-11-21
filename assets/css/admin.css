@@ -1,0 +1,20 @@
+.satori-report-logs-admin .wrap h1 {
+margin-bottom: 0.5em;
+}
+
+.satori-report-logs-admin .button-primary {
+margin-bottom: 1em;
+}
+
+.satori-report-logs-admin table.widefat th,
+.satori-report-logs-admin table.widefat td {
+vertical-align: middle;
+}
+
+.satori-report-logs-admin textarea.large-text {
+width: 100%;
+}
+
+.satori-report-logs-admin .form-table th {
+width: 160px;
+}
