@@ -1,0 +1,53 @@
+<?php
+/**
+ * Core plugin class.
+ *
+ * @package Satori_Report_Logs
+ */
+
+namespace Satori\Report_Logs;
+
+/* -------------------------------------------------
+ * Main Plugin Class
+ * -------------------------------------------------*/
+
+class Plugin {
+
+	/**
+	 * Singleton instance.
+	 *
+	 * @var Plugin
+	 */
+	protected static $instance;
+
+	/**
+	 * Get singleton instance.
+	 *
+	 * @return Plugin
+	 */
+	public static function instance() {
+		if ( null === static::$instance ) {
+			static::$instance = new static();
+		}
+
+		return static::$instance;
+	}
+
+	/**
+	 * Plugin constructor.
+	 */
+	protected function __construct() {
+		$this->define_hooks();
+	}
+
+	/**
+	 * Register core hooks.
+	 *
+	 * @return void
+	 */
+	protected function define_hooks() {
+		if ( is_admin() ) {
+			new Admin\Admin();
+		}
+	}
+}
