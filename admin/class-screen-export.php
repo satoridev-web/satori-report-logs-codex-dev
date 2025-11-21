@@ -7,6 +7,7 @@
 
 namespace Satori\Report_Logs\Admin;
 
+use Satori\Report_Logs\Capabilities;
 use Satori\Report_Logs\Db\Reports_Repository;
 use Satori\Report_Logs\Export\Export_Manager;
 
@@ -42,7 +43,7 @@ class Screen_Export {
          * @return void
          */
         public function render() {
-                if ( ! current_user_can( 'manage_options' ) ) {
+                if ( ! current_user_can( Capabilities::get_required_capability() ) ) {
                         wp_die( esc_html__( 'You do not have permission to access this page.', 'satori-report-logs' ) );
                 }
 

@@ -23,6 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'SATORI_REPORT_LOGS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SATORI_REPORT_LOGS_URL', plugin_dir_url( __FILE__ ) );
 define( 'SATORI_REPORT_LOGS_VERSION', '0.1.0' );
+if ( ! defined( 'SATORI_REPORT_LOGS_DEBUG' ) ) {
+	define( 'SATORI_REPORT_LOGS_DEBUG', false );
+}
+
 
 /**
  * Simple autoloader for Satori\Report_Logs\* classes.

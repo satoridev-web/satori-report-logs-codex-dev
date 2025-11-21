@@ -18,3 +18,34 @@ width: 100%;
 .satori-report-logs-admin .form-table th {
 width: 160px;
 }
+
+.satori-report-logs-admin .srl-editor-tabs {
+margin-bottom: 0;
+}
+
+.satori-report-logs-admin .srl-tab-panel {
+background: #fff;
+border: 1px solid #ddd;
+border-top: none;
+padding: 20px;
+display: none;
+}
+
+.satori-report-logs-admin .srl-tab-panel.is-active {
+display: block;
+}
+
+.satori-report-logs-admin .srl-tab-panel .description {
+margin-top: 0;
+}
+
+.satori-report-logs-admin .srl-duplicate-form {
+display: inline-flex;
+gap: 6px;
+align-items: center;
+margin-left: 6px;
+}
+
+.satori-report-logs-admin .srl-duplicate-form select {
+height: 28px;
+}

@@ -31,6 +31,13 @@ To provide consistent, Ball Australia–style service logs within WP using:
 - HTML and CSV render via template-driven/layout-driven generators.
 - PDF output uses **Dompdf** (install with `composer require dompdf/dompdf` inside the plugin directory).
 
+### Capabilities
+- Access to admin screens defaults to the `manage_options` capability.
+- Developers can override the required capability using the `satori_report_logs_capability` filter. Example:
+  ```php
+  add_filter( 'satori_report_logs_capability', fn() => 'edit_pages' );
+  ```
+
 ---
 
 ## 4. Folder Structure (Summary)

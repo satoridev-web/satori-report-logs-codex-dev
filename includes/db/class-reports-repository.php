@@ -7,6 +7,8 @@
 
 namespace Satori\Report_Logs\Db;
 
+use Satori\Report_Logs\Logging\Logger;
+
 /**
  * Provides data access helpers for reports and their items.
  */
@@ -197,6 +199,72 @@ class Reports_Repository {
 		);
 
                 return $wpdb->get_row( $sql, ARRAY_A );
+        }
+
+        /**
+         * Duplicate an existing report with all of its items.
+         *
+         * @param int   $log_id Source report ID.
+         * @param array $args   Optional overrides for 'month' and 'year'.
+         * @return int|false New log ID on success, false on failure.
+         */
+        public function duplicate_report( $log_id, array $args = array() ) {
+                $log_id = absint( $log_id );
+
+                if ( ! $log_id ) {
+                        return false;
+                }
+
+                $report = $this->get_report( $log_id );
+
+                if ( ! $report ) {
+                        return false;
+                }
+
+                $month = isset( $args['month'] ) ? absint( $args['month'] ) : (int) $report['month'];
+                $year  = isset( $args['year'] ) ? absint( $args['year'] ) : (int) $report['year'];
+
+                if ( $month < 1 || $month > 12 || 0 === $year ) {
+                        return false;
+                }
+
+                $new_log_id = $this->create_report(
+                        array(
+                                'month' => $month,
+                                'year'  => $year,
+                        )
+                );
+
+                if ( ! $new_log_id ) {
+                        Logger::log(
+                                'error',
+                                'Failed to duplicate report {source} to {month}/{year}.',
+                                array(
+                                        'source' => $log_id,
+                                        'month'  => $month,
+                                        'year'   => $year,
+                                )
+                        );
+
+                        return false;
+                }
+
+                $items = $this->get_items_for_report( $log_id );
+
+                if ( ! empty( $items ) ) {
+                        $this->save_items( $new_log_id, $items );
+                }
+
+                Logger::log(
+                        'info',
+                        'Report {source} duplicated as {target}.',
+                        array(
+                                'source' => $log_id,
+                                'target' => $new_log_id,
+                        )
+                );
+
+                return (int) $new_log_id;
         }
 
         /**
