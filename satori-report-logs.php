@@ -31,24 +31,39 @@ define( 'SATORI_REPORT_LOGS_VERSION', '0.1.0' );
  * @return void
  */
 spl_autoload_register(
-	function ( $fqcn ) {
-		if ( strpos( $fqcn, 'Satori\\Report_Logs\\' ) !== 0 ) {
-			return;
-		}
+        function ( $fqcn ) {
+                if ( strpos( $fqcn, 'Satori\\Report_Logs\\' ) !== 0 ) {
+                        return;
+                }
 
-		$relative = str_replace(
-			array( 'Satori\\Report_Logs\\', '\\' ),
-			array( '', '/' ),
-			$fqcn
-		);
+                $relative = str_replace(
+                        array( 'Satori\\Report_Logs\\', '\\' ),
+                        array( '', '/' ),
+                        $fqcn
+                );
 
-		$relative = strtolower( $relative );
-		$path     = SATORI_REPORT_LOGS_PATH . 'includes/' . $relative . '.php';
+                $relative = strtolower( $relative );
+                $parts    = explode( '/', $relative );
+                $class    = array_pop( $parts );
 
-		if ( file_exists( $path ) ) {
-			require_once $path;
-		}
-	}
+                $base = 'includes/';
+
+                if ( ! empty( $parts ) && 'admin' === $parts[0] ) {
+                        $base = '';
+                }
+
+                $path = SATORI_REPORT_LOGS_PATH . $base;
+
+                if ( ! empty( $parts ) ) {
+                        $path .= implode( '/', $parts ) . '/';
+                }
+
+                $path .= 'class-' . $class . '.php';
+
+                if ( file_exists( $path ) ) {
+                        require_once $path;
+                }
+        }
 );
 
 /**
@@ -57,10 +72,25 @@ spl_autoload_register(
  * @return void
  */
 function satori_report_logs_boot() {
-	if ( ! class_exists( '\Satori\Report_Logs\Plugin' ) ) {
-		return;
-	}
+        if ( ! class_exists( '\Satori\Report_Logs\Plugin' ) ) {
+                return;
+        }
 
-	\Satori\Report_Logs\Plugin::instance();
+        if ( ! class_exists( '\Satori\Report_Logs\Db\Schema' ) ) {
+                return;
+        }
+
+        \Satori\Report_Logs\Db\Schema::instance()->maybe_upgrade();
+        \Satori\Report_Logs\Plugin::instance();
 }
 add_action( 'plugins_loaded', 'satori_report_logs_boot' );
+
+/**
+ * Handle plugin activation tasks.
+ *
+ * @return void
+ */
+function satori_report_logs_activate() {
+        \Satori\Report_Logs\Db\Schema::instance()->install();
+}
+register_activation_hook( __FILE__, 'satori_report_logs_activate' );

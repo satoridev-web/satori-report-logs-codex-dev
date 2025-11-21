@@ -7,6 +7,9 @@
 
 namespace Satori\Report_Logs;
 
+use Satori\Report_Logs\Db\Reports_Repository;
+use Satori\Report_Logs\Db\Schema;
+
 /* -------------------------------------------------
  * Main Plugin Class
  * -------------------------------------------------*/
@@ -34,9 +37,26 @@ class Plugin {
 	}
 
 	/**
+	 * Database schema manager instance.
+	 *
+	 * @var Schema
+	 */
+	protected $schema;
+
+	/**
+	 * Reports repository instance.
+	 *
+	 * @var Reports_Repository
+	 */
+	protected $reports_repository;
+
+	/**
 	 * Plugin constructor.
 	 */
 	protected function __construct() {
+		$this->schema             = Schema::instance();
+		$this->reports_repository = Reports_Repository::instance();
+
 		$this->define_hooks();
 	}
 
@@ -49,5 +69,14 @@ class Plugin {
 		if ( is_admin() ) {
 			new Admin\Admin();
 		}
+	}
+
+	/**
+	 * Get the reports repository instance.
+	 *
+	 * @return Reports_Repository
+	 */
+	public function get_reports_repository() {
+		return $this->reports_repository;
 	}
 }
