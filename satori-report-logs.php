@@ -58,7 +58,7 @@ spl_autoload_register(
                         $path .= implode( '/', $parts ) . '/';
                 }
 
-                $path .= 'class-' . $class . '.php';
+                $path .= 'class-' . str_replace( '_', '-', $class ) . '.php';
 
                 if ( file_exists( $path ) ) {
                         require_once $path;

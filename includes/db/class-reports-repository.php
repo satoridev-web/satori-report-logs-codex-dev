@@ -109,11 +109,11 @@ class Reports_Repository {
 	 * @param array $data      Report data to update.
 	 * @return bool True on success, false on failure.
 	 */
-	public function update_report( $report_id, array $data ) {
-		global $wpdb;
+        public function update_report( $report_id, array $data ) {
+                global $wpdb;
 
-		$fields = array();
-		$format = array();
+                $fields = array();
+                $format = array();
 
 		if ( isset( $data['month'] ) ) {
 			$fields['month'] = absint( $data['month'] );
@@ -140,8 +140,47 @@ class Reports_Repository {
 			array( '%d' )
 		);
 
-		return false !== $updated;
-	}
+                return false !== $updated;
+        }
+
+        /**
+         * Find a report by month and year.
+         *
+         * @param int $month Report month.
+         * @param int $year  Report year.
+         * @return array|null Report data or null if not found.
+         */
+        public function find_report_by_month_year( $month, $year ) {
+                global $wpdb;
+
+                $month = absint( $month );
+                $year  = absint( $year );
+
+                if ( $month < 1 || $month > 12 || 0 === $year ) {
+                        return null;
+                }
+
+                $sql = $wpdb->prepare(
+                        "SELECT * FROM {$this->reports_table} WHERE month = %d AND year = %d",
+                        $month,
+                        $year
+                );
+
+                return $wpdb->get_row( $sql, ARRAY_A );
+        }
+
+        /**
+         * Get all reports ordered by year and month (desc).
+         *
+         * @return array
+         */
+        public function get_reports() {
+                global $wpdb;
+
+                $sql = "SELECT * FROM {$this->reports_table} ORDER BY year DESC, month DESC";
+
+                return $wpdb->get_results( $sql, ARRAY_A );
+        }
 
 	/**
 	 * Get a single report record.
@@ -149,22 +188,41 @@ class Reports_Repository {
 	 * @param int $report_id Report ID.
 	 * @return array|null Report data or null if not found.
 	 */
-	public function get_report( $report_id ) {
-		global $wpdb;
+        public function get_report( $report_id ) {
+                global $wpdb;
 
-		$sql = $wpdb->prepare(
-			"SELECT * FROM {$this->reports_table} WHERE id = %d",
+                $sql = $wpdb->prepare(
+                        "SELECT * FROM {$this->reports_table} WHERE id = %d",
 			absint( $report_id )
 		);
 
-		return $wpdb->get_row( $sql, ARRAY_A );
-	}
+                return $wpdb->get_row( $sql, ARRAY_A );
+        }
 
-	/**
-	 * Get all items for a given report.
-	 *
-	 * @param int $report_id Report ID.
-	 * @return array List of items.
+        /**
+         * Get a single item value by label for a report.
+         *
+         * @param int    $report_id Report ID.
+         * @param string $label     Item label to search for.
+         * @return string|null Item value or null if not found.
+         */
+        public function get_item_value_by_label( $report_id, $label ) {
+                global $wpdb;
+
+                $sql = $wpdb->prepare(
+                        "SELECT value FROM {$this->items_table} WHERE log_id = %d AND label = %s ORDER BY id DESC LIMIT 1",
+                        absint( $report_id ),
+                        sanitize_text_field( $label )
+                );
+
+                return $wpdb->get_var( $sql );
+        }
+
+        /**
+         * Get all items for a given report.
+         *
+         * @param int $report_id Report ID.
+         * @return array List of items.
 	 */
 	public function get_items_for_report( $report_id ) {
 		global $wpdb;
