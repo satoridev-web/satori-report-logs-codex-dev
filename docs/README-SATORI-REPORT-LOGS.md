@@ -18,13 +18,18 @@ To provide consistent, Ball Australia–style service logs within WP using:
 ---
 
 ## 3. Key Features
-- Monthly service log records  
-- Grid/table-style admin editor  
-- Custom database tables  
-- HTML/CSV/PDF exports  
-- Capability‑based access restrictions  
-- SATORI namespace + autoloader compliance  
+- Monthly service log records
+- Grid/table-style admin editor
+- Custom database tables
+- HTML/CSV/PDF exports
+- Capability‑based access restrictions
+- SATORI namespace + autoloader compliance
 - Hooks & filters for extensibility
+
+### Export Engine
+- Export Manager orchestrates HTML, CSV, and PDF outputs from the admin Export screen.
+- HTML and CSV render via template-driven/layout-driven generators.
+- PDF output uses **Dompdf** (install with `composer require dompdf/dompdf` inside the plugin directory).
 
 ---
 
