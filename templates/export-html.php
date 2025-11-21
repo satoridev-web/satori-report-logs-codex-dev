@@ -8,6 +8,10 @@
  * @package Satori_Report_Logs
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 $headers  = array();
 $sections = array();
 

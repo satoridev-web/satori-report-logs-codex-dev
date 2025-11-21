@@ -94,6 +94,10 @@ class Export_Manager {
                  */
                 $output = apply_filters( 'satori_report_logs_export_output', $output, $format, $report, $items );
 
+                if ( headers_sent() ) {
+                        return new WP_Error( 'satori_report_logs_headers_sent', __( 'Export headers already sent. Please try again.', 'satori-report-logs' ) );
+                }
+
                 $this->send_headers( $content_type, $disposition, $filename );
 
                 /**
